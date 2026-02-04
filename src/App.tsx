@@ -1,12 +1,20 @@
-import AppTheme from "./clients/default/theme/AppTheme";
-import ButtonUsage from "./components/ButtonUsage";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
 
-function App() {
-  return (
-    <AppTheme>
-      <ButtonUsage />
-    </AppTheme>
-  );
+const router = createRouter({
+  routeTree,
+  defaultPreload: "intent",
+});
+
+// Route typesafety is automatic!
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
 }
+
+const App = () => {
+  return <RouterProvider router={router} />;
+};
 
 export default App;
