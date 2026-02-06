@@ -1,20 +1,15 @@
-import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
-
-const router = createRouter({
-  routeTree,
-  defaultPreload: "intent",
-});
-
-// Route typesafety is automatic!
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
-}
+import { RouterProvider } from "react-router-dom";
+import { RouterConfig } from "./config/router.config";
+import { AppTheme } from "./clients";
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <AppTheme>
+        <RouterProvider router={RouterConfig} />
+      </AppTheme>
+    </>
+  );
 };
 
 export default App;
