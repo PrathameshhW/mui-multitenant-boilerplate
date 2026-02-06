@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppForm from "../../components/Form/AppForm";
 import { useForm } from "react-hook-form";
+import { LoginLayout } from "../../clients";
 
 const LoginPage = () => {
   const form = useForm({});
@@ -19,13 +20,7 @@ const LoginPage = () => {
     console.log(data);
   };
 
-  return (
-    <div>
-      <AppForm form={form} onSubmit={form.handleSubmit(handleFormSubmit)}>
-        <h1>Login Form</h1>
-      </AppForm>
-    </div>
-  );
+  return <LoginLayout />;
 };
 
 export default LoginPage;
