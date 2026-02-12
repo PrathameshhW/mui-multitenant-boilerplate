@@ -10,6 +10,15 @@ const theme = createTheme({
       // contrastText: will be calculated to contrast with palette.primary.main
     },
   },
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
+    },
+  },
 });
 
 const AppTheme: React.FC<AppThemeProps> = ({ children }) => {
