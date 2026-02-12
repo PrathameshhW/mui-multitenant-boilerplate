@@ -1,28 +1,11 @@
 import AppForm from "../../../components/Form/AppForm";
 import FormItem from "../../../components/Form/FormItem";
-import { useForm } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
+import type { LoginLayoutProps } from "../../../pages/login/types/login.dto";
 
-const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-const LoginLayout = () => {
-  const form = useForm({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const handleLoginSubmit = (formValues: any) => {
-    console.log(formValues);
-  };
+const LoginLayout: React.FC<LoginLayoutProps> = (props) => {
+  const { form, handleLoginSubmit } = props;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
