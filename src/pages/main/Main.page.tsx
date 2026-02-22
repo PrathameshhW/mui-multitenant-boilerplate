@@ -1,125 +1,172 @@
-import React from "react";
 import {
   AppBar,
+  Avatar,
   Box,
-  CssBaseline,
+  Button,
+  Divider,
   Drawer,
   IconButton,
-  Toolbar,
-  Typography,
   List,
+  ListItem,
   ListItemButton,
   ListItemText,
-  Divider,
-  Avatar,
+  Stack,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { Outlet, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
-const drawerWidth = 240;
+const sidebarWidth = 260;
+
+const sideMenuGroups = [
+  { title: "Main", items: ["Overview", "Analytics", "Sales"] },
+  { title: "Management", items: ["Customers", "Orders", "Support"] },
+  { title: "Settings", items: ["Billing", "Team", "Integrations"] },
+];
 
 const MainPage = () => {
-  const [open, setOpen] = React.useState(true);
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState("Overview");
 
-  const toggleDrawer = () => {
-    setOpen((prev) => !prev);
-  };
+  const drawerContent = (
+    <Box className="flex h-full flex-col justify-between bg-white px-3 py-4">
+      <Box>
+        <Typography variant="h6" fontWeight={800}>
+          MUI Admin
+        </Typography>
+        <Typography variant="caption" color="text.secondary" display="block" mb={2.5}>
+          Control center
+        </Typography>
 
-  console.log(location.pathname);
+        {sideMenuGroups.map((group, groupIndex) => (
+          <Box key={group.title} sx={{ mb: 1.5 }}>
+            <Typography variant="overline" color="text.secondary" sx={{ pl: 1.5 }}>
+              {group.title}
+            </Typography>
+            <List disablePadding>
+              {group.items.map((menu) => (
+                <ListItem key={menu} disablePadding sx={{ mb: 0.3 }}>
+                  <ListItemButton
+                    selected={menu === activeMenu}
+                    onClick={() => {
+                      setActiveMenu(menu);
+                      setMobileOpen(false);
+                    }}
+                  >
+                    <ListItemText
+                      primary={menu}
+                      primaryTypographyProps={{
+                        variant: "body2",
+                        fontWeight: menu === activeMenu ? 700 : 500,
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+            {groupIndex < sideMenuGroups.length - 1 && <Divider sx={{ mt: 1, mb: 1 }} />}
+          </Box>
+        ))}
+      </Box>
+
+      <Box className="rounded-md border border-slate-200 bg-white p-3">
+        <Stack direction="row" spacing={1.25} alignItems="center">
+          <Avatar sx={{ width: 32, height: 32 }}>P</Avatar>
+          <Box>
+            <Typography variant="body2" fontWeight={600}>
+              Prathamesh
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Admin
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
+    </Box>
+  );
 
   return (
-    <Box className="flex h-screen bg-slate-100">
-      <CssBaseline />
+    <Box className="flex h-screen overflow-hidden bg-slate-50">
+      <Box component="nav" sx={{ width: { md: sidebarWidth }, flexShrink: { md: 0 } }}>
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={() => setMobileOpen(false)}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": { width: sidebarWidth },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", md: "block" },
+            "& .MuiDrawer-paper": {
+              width: sidebarWidth,
+              boxSizing: "border-box",
+              borderRight: "1px solid rgba(18, 24, 40, 0.08)",
+            },
+          }}
+          open
+        >
+          {drawerContent}
+        </Drawer>
+      </Box>
 
-      {/* ===== AppBar ===== */}
-      <AppBar
-        position="fixed"
-        sx={{
-          backgroundColor: "primary.main",
-          transition: "all 0.3s",
-          width: open ? `calc(100% - ${drawerWidth}px)` : "100%",
-          ml: open ? `${drawerWidth}px` : 0,
-        }}
-      >
-        <Toolbar className="flex justify-between">
-          <div className="flex items-center gap-2">
-            <IconButton color="inherit" onClick={toggleDrawer}>
-              {open ? <ChevronLeftIcon /> : <MenuIcon />}
-            </IconButton>
-            <Typography variant="h6" noWrap>
-              Dev Dashboard
-            </Typography>
-          </div>
+      <Box component="main" className="flex min-h-0 flex-1 flex-col overflow-auto">
+        <AppBar
+          position="sticky"
+          color="inherit"
+          elevation={0}
+          className="top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur"
+        >
+          <Toolbar sx={{ justifyContent: "space-between", gap: 2 }} className="p-4!">
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <IconButton
+                size="small"
+                edge="start"
+                onClick={() => setMobileOpen(true)}
+                sx={{ display: { md: "none" } }}
+              >
+                <Typography variant="button">Menu</Typography>
+              </IconButton>
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Dashboard
+                </Typography>
+                <Typography variant="h6" fontWeight={700}>
+                  {activeMenu}
+                </Typography>
+              </Box>
+            </Stack>
 
-          <Avatar sx={{ bgcolor: "white", color: "primary.main" }}>PJ</Avatar>
-        </Toolbar>
-      </AppBar>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Button variant="outlined" size="small">
+                Notification
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                color="error"
+                onClick={() => {
+                  navigate("/login", { replace: true });
+                }}
+              >
+                Logout
+              </Button>
+              <Avatar sx={{ width: 32, height: 32 }}>P</Avatar>
+            </Stack>
+          </Toolbar>
+        </AppBar>
 
-      {/* ===== Drawer ===== */}
-      <Drawer
-        variant="persistent"
-        open={open}
-        sx={{
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            background: "linear-gradient(180deg, #4B0082, #2e0057)",
-            color: "white",
-          },
-        }}
-      >
-        <Toolbar />
-
-        <Box className="px-4 py-2">
-          <Typography variant="subtitle1" className="opacity-80">
-            Navigation
-          </Typography>
-        </Box>
-
-        <Divider sx={{ borderColor: "rgba(255,255,255,0.2)" }} />
-
-        <List className="px-2 py-3 space-y-1">
-          <ListItemButton
-            component={NavLink}
-            to="/"
-            selected={location.pathname === "/"}
-          >
-            <ListItemText primary="Dashboard" />
-          </ListItemButton>
-
-          <ListItemButton
-            component={NavLink}
-            to="/users"
-            selected={location.pathname === "/users"}
-          >
-            <ListItemText primary="Users" />
-          </ListItemButton>
-
-          <ListItemButton
-            component={NavLink}
-            to="/settings"
-            selected={location.pathname === "/settings"}
-          >
-            <ListItemText primary="Settings" />
-          </ListItemButton>
-        </List>
-      </Drawer>
-
-      {/* ===== Main Content ===== */}
-      <Box
-        component="main"
-        className="flex-1 p-6 overflow-auto"
-        sx={{
-          transition: "margin 0.3s",
-          ml: open ? `${drawerWidth}px` : 0,
-        }}
-      >
-        <Toolbar />
-
-        {/* Content Wrapper Card */}
-        <div className="bg-white rounded-2xl shadow-md p-6 min-h-full">
+        <Box className="p-6">
           <Outlet />
-        </div>
+        </Box>
       </Box>
     </Box>
   );

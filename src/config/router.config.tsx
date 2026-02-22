@@ -1,7 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
-import AuthWrapper from "../components/AuthWrapper";
 import LoginPage from "../pages/login/login.page";
 import MainPage from "../pages/main/Main.page";
+import AuthWrapper from "../wrappers/AuthWrapper";
+import PublicWrapper from "../wrappers/PublicWrapper";
 
 export const RouterConfig = createBrowserRouter([
   {
@@ -23,6 +24,11 @@ export const RouterConfig = createBrowserRouter([
 
   {
     path: "login",
-    element: <LoginPage />,
+    element: <PublicWrapper />,
+    children: [
+      {
+        element: <LoginPage />,
+      },
+    ],
   },
 ]);

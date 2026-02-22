@@ -1,5 +1,3 @@
-// 🔴 Use relative paths only, dont use absolute paths it causes issues while building the application
-
 import { lazy } from "react";
 import { envConfig } from "../config/env.config";
 

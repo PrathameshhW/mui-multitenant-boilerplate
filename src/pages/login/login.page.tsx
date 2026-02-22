@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { LoginLayout } from "../../clients";
@@ -15,13 +14,6 @@ const LoginPage = () => {
   });
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, []);
 
   const handleFormSubmit = (data: LoginFormValues) => {
     localStorage.setItem("token", data.email);
