@@ -86,12 +86,16 @@ Example file:
 
 ## How Client Selection Works
 
-Client selection is resolved at compile time in `vite.config.ts` via aliases:
+Client selection is resolved at compile time in `vite.config.ts` via one alias:
 
-- `@client-theme` -> `src/clients/<selected>/theme/AppTheme.tsx`
-- `@client-login-layout` -> `src/clients/<selected>/login/LoginLayout.tsx`
+- `@client` -> `src/clients/<selected>`
 
-Because imports are static aliases (not dynamic template imports), Vite only bundles the selected client module.
+Examples:
+- `@client/theme/AppTheme`
+- `@client/login/LoginLayout`
+- `@client/pages/Dashboard`
+
+Because imports are static alias imports (not dynamic template imports), Vite only bundles the selected client modules.
 
 ## Important Rule
 
