@@ -1,28 +1,37 @@
 import React, { type ReactElement } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, type FieldPath, type FieldValues, useFormContext } from "react-hook-form";
 
-interface FormItemProps<T extends ReactElement> {
-  name: string;
-  children: T;
+type ControlledInputProps = {
+  name?: string;
+  value?: unknown;
+  onChange?: (...event: unknown[]) => void;
+  onBlur?: () => void;
+  error?: boolean;
+  helperText?: string;
+};
+
+interface FormItemProps<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>> {
+  name: TName;
+  children: ReactElement<ControlledInputProps>;
 }
 
-const FormItem = <T extends ReactElement>({
+const FormItem = <TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>>({
   name,
   children,
-}: FormItemProps<T>) => {
-  const { control } = useFormContext();
+}: FormItemProps<TFieldValues, TName>) => {
+  const { control } = useFormContext<TFieldValues>();
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState }) => {
-        return React.cloneElement(children, {
+      render={({ field, fieldState }) =>
+        React.cloneElement(children, {
           ...field,
-          error: !!fieldState.error,
+          error: Boolean(fieldState.error),
           helperText: fieldState.error?.message,
-        } as any);
-      }}
+        })
+      }
     />
   );
 };

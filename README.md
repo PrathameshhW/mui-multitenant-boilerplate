@@ -1,73 +1,123 @@
-# React + TypeScript + Vite
+# MUI Multi-Client Boilerplate
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite boilerplate for white-label apps with client-specific theme and login layout.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19
+- TypeScript
+- Vite
+- MUI 7
+- Tailwind CSS 4
+- React Hook Form + Zod
 
-## React Compiler
+## Core Idea
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Each client has its own UI implementation:
 
-## Expanding the ESLint configuration
+- `src/clients/<client>/theme/AppTheme.tsx`
+- `src/clients/<client>/login/LoginLayout.tsx`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Builds are client-specific.  
+Only the selected client's theme/layout files are included in the final bundle.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Project Structure
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+src/
+  clients/
+    default/
+      theme/AppTheme.tsx
+      login/LoginLayout.tsx
+    client1/
+      theme/AppTheme.tsx
+      login/LoginLayout.tsx
+  pages/
+  wrappers/
+  components/
+  config/
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
+
+## Run in Dev
+
+Default client:
+
+```bash
+npm run dev
+```
+
+Client 1 mode:
+
+```bash
+npm run client1
+```
+
+## Build
+
+Default build:
+
+```bash
+npm run build
+```
+
+Client 1 build:
+
+```bash
+npm run client1:build
+```
+
+## Environment
+
+Use Vite env to select client:
+
+```bash
+VITE_ORG_NAME=client1
+```
+
+Example file:
+
+- `.env.client1` -> `VITE_ORG_NAME=client1`
+
+## How Client Selection Works
+
+Client selection is resolved at compile time in `vite.config.ts` via one alias:
+
+- `@client` -> `src/clients/<selected>`
+
+Examples:
+- `@client/theme/AppTheme`
+- `@client/login/LoginLayout`
+- `@client/pages/Dashboard`
+
+Because imports are static alias imports (not dynamic template imports), Vite only bundles the selected client modules.
+
+## Important Rule
+
+If selected client files are missing, Vite throws an error during dev/build.  
+This is intentional to prevent accidental fallback bundles with wrong branding.
+
+## Add a New Client
+
+1. Create folder:
+   - `src/clients/<new-client>/theme/AppTheme.tsx`
+   - `src/clients/<new-client>/login/LoginLayout.tsx`
+2. Add env file (optional):
+   - `.env.<mode>` with `VITE_ORG_NAME=<new-client>`
+3. Run:
+   - `vite --mode <mode>` for dev
+   - `vite build --mode <mode>` for build
+
+## Scripts
+
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
+- `npm run lint`
+- `npm run client1`
+- `npm run client1:build`
