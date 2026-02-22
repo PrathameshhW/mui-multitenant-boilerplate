@@ -27,6 +27,7 @@ export const RouterConfig = createBrowserRouter([
     element: <PublicWrapper />,
     children: [
       {
+        path: "",
         element: <LoginPage />,
       },
     ],
