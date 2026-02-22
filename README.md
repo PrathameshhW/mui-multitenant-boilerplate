@@ -1,73 +1,132 @@
-# React + TypeScript + Vite
+# MUI Multi-Client Boilerplate
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Production-ready React boilerplate with:
+- `React 19 + TypeScript + Vite`
+- `MUI 7` + `Tailwind CSS 4`
+- `React Hook Form + Zod` form validation
+- Route guards for public/auth flows
+- Client-specific theme and layout loading via `VITE_ORG_NAME`
 
-Currently, two official plugins are available:
+## Why this boilerplate
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is built for multi-tenant or white-label apps where UI branding changes by client.
+Each client can provide its own:
+- `theme/AppTheme.tsx`
+- `login/LoginLayout.tsx`
 
-## React Compiler
+The app picks the correct client package at runtime and falls back to `default` automatically.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React
+- TypeScript
+- Vite
+- Material UI
+- Tailwind CSS
+- React Router
+- React Hook Form
+- Zod
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 1. Install dependencies
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Run development server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### 3. Build for production
+
+```bash
+npm run build
+```
+
+### 4. Preview production build
+
+```bash
+npm run preview
+```
+
+## Available Scripts
+
+- `npm run dev` - start Vite dev server
+- `npm run build` - type-check and create production build
+- `npm run preview` - run built app locally
+- `npm run lint` - run ESLint
+
+## Environment Variables
+
+Create a `.env` file in project root:
+
+```bash
+VITE_ORG_NAME=default
+```
+
+Set `VITE_ORG_NAME` to a client folder name under `src/clients`.
+
+Example:
+- `VITE_ORG_NAME=acme` loads `src/clients/acme/*`
+- if missing, app falls back to `src/clients/default/*`
+
+## Project Structure
+
+```text
+src/
+  clients/
+    default/
+      theme/AppTheme.tsx
+      login/LoginLayout.tsx
+  config/
+    env.config.ts
+    router.config.tsx
+  pages/
+    login/
+    main/
+    dashboard/
+  wrappers/
+    AuthWrapper.tsx
+    PublicWrapper.tsx
+  components/
+    Form/
+```
+
+## Multi-Client Theming
+
+Client resolution is handled in `src/clients/index.ts`:
+- Reads `VITE_ORG_NAME`
+- Loads matching client modules when available
+- Falls back to `default` theme/layout
+
+The main shell (`src/pages/main/Main.page.tsx`) is styled with MUI theme tokens, so palette changes in client theme files are reflected across the app.
+
+## Auth Flow (Current Boilerplate)
+
+- `AuthWrapper` protects private routes
+- `PublicWrapper` blocks login route when already authenticated
+- Login stores a demo token in `localStorage`
+
+This is intentionally simple and ready to be replaced with your real auth API.
+
+## Creating a New Client
+
+1. Create a new folder:
+   - `src/clients/<client-name>/theme/AppTheme.tsx`
+   - `src/clients/<client-name>/login/LoginLayout.tsx`
+2. Set `.env`:
+   - `VITE_ORG_NAME=<client-name>`
+3. Restart dev server
+
+## Notes
+
+- The repo includes both MUI and Tailwind. Prefer MUI theme tokens for reusable, client-driven branding.
+- Keep component structure shared, and override branding through client theme/layout modules.
+
+## License
+
+Private project boilerplate.

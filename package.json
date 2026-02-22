@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "client1": "vite --mode client1 --host",
+    "client1:build": "tsc -b && vite build --mode client1",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
