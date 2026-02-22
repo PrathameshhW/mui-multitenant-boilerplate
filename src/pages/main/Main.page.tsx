@@ -31,18 +31,37 @@ const MainPage = () => {
   const [activeMenu, setActiveMenu] = useState("Overview");
 
   const drawerContent = (
-    <Box className="flex h-full flex-col justify-between bg-white px-3 py-4">
+    <Box
+      sx={(theme) => ({
+        display: "flex",
+        height: "100%",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        bgcolor: theme.palette.background.paper,
+        px: 1.5,
+        py: 2,
+      })}
+    >
       <Box>
         <Typography variant="h6" fontWeight={800}>
           MUI Admin
         </Typography>
-        <Typography variant="caption" color="text.secondary" display="block" mb={2.5}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          display="block"
+          mb={2.5}
+        >
           Control center
         </Typography>
 
         {sideMenuGroups.map((group, groupIndex) => (
           <Box key={group.title} sx={{ mb: 1.5 }}>
-            <Typography variant="overline" color="text.secondary" sx={{ pl: 1.5 }}>
+            <Typography
+              variant="overline"
+              color="text.secondary"
+              sx={{ pl: 1.5 }}
+            >
               {group.title}
             </Typography>
             <List disablePadding>
@@ -50,6 +69,15 @@ const MainPage = () => {
                 <ListItem key={menu} disablePadding sx={{ mb: 0.3 }}>
                   <ListItemButton
                     selected={menu === activeMenu}
+                    sx={(theme) => ({
+                      "&.Mui-selected": {
+                        bgcolor: theme.palette.action.selected,
+                        color: theme.palette.primary.main,
+                      },
+                      "&.Mui-selected:hover": {
+                        bgcolor: theme.palette.action.selected,
+                      },
+                    })}
                     onClick={() => {
                       setActiveMenu(menu);
                       setMobileOpen(false);
@@ -66,12 +94,21 @@ const MainPage = () => {
                 </ListItem>
               ))}
             </List>
-            {groupIndex < sideMenuGroups.length - 1 && <Divider sx={{ mt: 1, mb: 1 }} />}
+            {groupIndex < sideMenuGroups.length - 1 && (
+              <Divider sx={{ mt: 1, mb: 1 }} />
+            )}
           </Box>
         ))}
       </Box>
 
-      <Box className="rounded-md border border-slate-200 bg-white p-3">
+      <Box
+        sx={(theme) => ({
+          borderRadius: theme.shape.borderRadius,
+          border: `1px solid ${theme.palette.divider}`,
+          bgcolor: theme.palette.background.paper,
+          p: 1.5,
+        })}
+      >
         <Stack direction="row" spacing={1.25} alignItems="center">
           <Avatar sx={{ width: 32, height: 32 }}>P</Avatar>
           <Box>
@@ -88,8 +125,18 @@ const MainPage = () => {
   );
 
   return (
-    <Box className="flex h-screen overflow-hidden bg-slate-50">
-      <Box component="nav" sx={{ width: { md: sidebarWidth }, flexShrink: { md: 0 } }}>
+    <Box
+      sx={(theme) => ({
+        display: "flex",
+        height: "100vh",
+        overflow: "hidden",
+        bgcolor: theme.palette.background.default,
+      })}
+    >
+      <Box
+        component="nav"
+        sx={{ width: { md: sidebarWidth }, flexShrink: { md: 0 } }}
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -97,7 +144,10 @@ const MainPage = () => {
           ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: "block", md: "none" },
-            "& .MuiDrawer-paper": { width: sidebarWidth },
+            "& .MuiDrawer-paper": {
+              width: sidebarWidth,
+              bgcolor: "background.paper",
+            },
           }}
         >
           {drawerContent}
@@ -109,7 +159,8 @@ const MainPage = () => {
             "& .MuiDrawer-paper": {
               width: sidebarWidth,
               boxSizing: "border-box",
-              borderRight: "1px solid rgba(18, 24, 40, 0.08)",
+              borderRight: (theme) => `1px solid ${theme.palette.divider}`,
+              bgcolor: "background.paper",
             },
           }}
           open
@@ -118,14 +169,35 @@ const MainPage = () => {
         </Drawer>
       </Box>
 
-      <Box component="main" className="flex min-h-0 flex-1 flex-col overflow-auto">
+      <Box
+        component="main"
+        sx={{
+          display: "flex",
+          minHeight: 0,
+          flex: 1,
+          flexDirection: "column",
+          overflow: "auto",
+        }}
+      >
         <AppBar
           position="sticky"
           color="inherit"
           elevation={0}
-          className="top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur"
+          sx={(theme) => ({
+            top: 0,
+            zIndex: 10,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            bgcolor: theme.palette.background.paper,
+            backdropFilter: "blur(8px)",
+          })}
         >
-          <Toolbar sx={{ justifyContent: "space-between", gap: 2 }} className="p-4!">
+          <Toolbar
+            sx={{
+              justifyContent: "space-between",
+              gap: 2,
+              p: "16px !important",
+            }}
+          >
             <Stack direction="row" spacing={1.5} alignItems="center">
               <IconButton
                 size="small"
@@ -154,6 +226,7 @@ const MainPage = () => {
                 size="small"
                 color="error"
                 onClick={() => {
+                  localStorage.removeItem("token");
                   navigate("/login", { replace: true });
                 }}
               >
@@ -164,7 +237,7 @@ const MainPage = () => {
           </Toolbar>
         </AppBar>
 
-        <Box className="p-6">
+        <Box sx={{ p: 3 }}>
           <Outlet />
         </Box>
       </Box>
