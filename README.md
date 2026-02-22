@@ -1,78 +1,25 @@
 # MUI Multi-Client Boilerplate
 
-Production-ready React boilerplate with:
-- `React 19 + TypeScript + Vite`
-- `MUI 7` + `Tailwind CSS 4`
-- `React Hook Form + Zod` form validation
-- Route guards for public/auth flows
-- Client-specific theme and layout loading via `VITE_ORG_NAME`
+React + TypeScript + Vite boilerplate for white-label apps with client-specific theme and login layout.
 
-## Why this boilerplate
+## Stack
 
-This project is built for multi-tenant or white-label apps where UI branding changes by client.
-Each client can provide its own:
-- `theme/AppTheme.tsx`
-- `login/LoginLayout.tsx`
-
-The app picks the correct client package at runtime and falls back to `default` automatically.
-
-## Tech Stack
-
-- React
+- React 19
 - TypeScript
 - Vite
-- Material UI
-- Tailwind CSS
-- React Router
-- React Hook Form
-- Zod
+- MUI 7
+- Tailwind CSS 4
+- React Hook Form + Zod
 
-## Getting Started
+## Core Idea
 
-### 1. Install dependencies
+Each client has its own UI implementation:
 
-```bash
-npm install
-```
+- `src/clients/<client>/theme/AppTheme.tsx`
+- `src/clients/<client>/login/LoginLayout.tsx`
 
-### 2. Run development server
-
-```bash
-npm run dev
-```
-
-### 3. Build for production
-
-```bash
-npm run build
-```
-
-### 4. Preview production build
-
-```bash
-npm run preview
-```
-
-## Available Scripts
-
-- `npm run dev` - start Vite dev server
-- `npm run build` - type-check and create production build
-- `npm run preview` - run built app locally
-- `npm run lint` - run ESLint
-
-## Environment Variables
-
-Create a `.env` file in project root:
-
-```bash
-VITE_ORG_NAME=default
-```
-
-Set `VITE_ORG_NAME` to a client folder name under `src/clients`.
-
-Example:
-- `VITE_ORG_NAME=acme` loads `src/clients/acme/*`
-- if missing, app falls back to `src/clients/default/*`
+Builds are client-specific.  
+Only the selected client's theme/layout files are included in the final bundle.
 
 ## Project Structure
 
@@ -82,51 +29,91 @@ src/
     default/
       theme/AppTheme.tsx
       login/LoginLayout.tsx
-  config/
-    env.config.ts
-    router.config.tsx
+    client1/
+      theme/AppTheme.tsx
+      login/LoginLayout.tsx
   pages/
-    login/
-    main/
-    dashboard/
   wrappers/
-    AuthWrapper.tsx
-    PublicWrapper.tsx
   components/
-    Form/
+  config/
 ```
 
-## Multi-Client Theming
+## Setup
 
-Client resolution is handled in `src/clients/index.ts`:
-- Reads `VITE_ORG_NAME`
-- Loads matching client modules when available
-- Falls back to `default` theme/layout
+```bash
+npm install
+```
 
-The main shell (`src/pages/main/Main.page.tsx`) is styled with MUI theme tokens, so palette changes in client theme files are reflected across the app.
+## Run in Dev
 
-## Auth Flow (Current Boilerplate)
+Default client:
 
-- `AuthWrapper` protects private routes
-- `PublicWrapper` blocks login route when already authenticated
-- Login stores a demo token in `localStorage`
+```bash
+npm run dev
+```
 
-This is intentionally simple and ready to be replaced with your real auth API.
+Client 1 mode:
 
-## Creating a New Client
+```bash
+npm run client1
+```
 
-1. Create a new folder:
-   - `src/clients/<client-name>/theme/AppTheme.tsx`
-   - `src/clients/<client-name>/login/LoginLayout.tsx`
-2. Set `.env`:
-   - `VITE_ORG_NAME=<client-name>`
-3. Restart dev server
+## Build
 
-## Notes
+Default build:
 
-- The repo includes both MUI and Tailwind. Prefer MUI theme tokens for reusable, client-driven branding.
-- Keep component structure shared, and override branding through client theme/layout modules.
+```bash
+npm run build
+```
 
-## License
+Client 1 build:
 
-Private project boilerplate.
+```bash
+npm run client1:build
+```
+
+## Environment
+
+Use Vite env to select client:
+
+```bash
+VITE_ORG_NAME=client1
+```
+
+Example file:
+
+- `.env.client1` -> `VITE_ORG_NAME=client1`
+
+## How Client Selection Works
+
+Client selection is resolved at compile time in `vite.config.ts` via aliases:
+
+- `@client-theme` -> `src/clients/<selected>/theme/AppTheme.tsx`
+- `@client-login-layout` -> `src/clients/<selected>/login/LoginLayout.tsx`
+
+Because imports are static aliases (not dynamic template imports), Vite only bundles the selected client module.
+
+## Important Rule
+
+If selected client files are missing, Vite throws an error during dev/build.  
+This is intentional to prevent accidental fallback bundles with wrong branding.
+
+## Add a New Client
+
+1. Create folder:
+   - `src/clients/<new-client>/theme/AppTheme.tsx`
+   - `src/clients/<new-client>/login/LoginLayout.tsx`
+2. Add env file (optional):
+   - `.env.<mode>` with `VITE_ORG_NAME=<new-client>`
+3. Run:
+   - `vite --mode <mode>` for dev
+   - `vite build --mode <mode>` for build
+
+## Scripts
+
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
+- `npm run lint`
+- `npm run client1`
+- `npm run client1:build`
