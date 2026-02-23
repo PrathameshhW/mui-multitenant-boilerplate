@@ -31,6 +31,18 @@ const queryClient = new QueryClient({
       notifyError(error);
     },
   }),
+  defaultOptions: {
+    queries: {
+      retry: 1, // Number of retries on failure
+      staleTime: 30 * 1000, // 30 seconds: Time in milliseconds before a query is considered stale
+      // gcTime: 5 * 60 * 1000, // default is 5 minutes: Time in milliseconds before a query is garbage collected
+      refetchOnWindowFocus: false, // Whether to refetch queries when the window regains focus
+      refetchOnReconnect: true, // Whether to refetch queries when the connection is reestablished
+    },
+    mutations: {
+      retry: 0,
+    },
+  },
 });
 
 const App = () => {

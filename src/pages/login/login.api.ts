@@ -1,4 +1,6 @@
 import type { LoginFormValues } from "./types/login.dto";
+import { apiClient } from "../../lib/api-client";
+import { envConfig } from "../../config/env.config";
 
 export interface LoginResponse {
   token: string;
@@ -7,6 +9,12 @@ export interface LoginResponse {
 export const loginUser = async (
   credentials: LoginFormValues
 ): Promise<LoginResponse> => {
+  if (envConfig.apiBaseUrl) {
+    const { data } = await apiClient.post<LoginResponse>("/auth/login", credentials);
+    return data;
+  }
+
+  // Local fallback for boilerplate/demo mode when no API base URL is configured.
   await new Promise((resolve, reject) =>
     setTimeout(() => {
       if (

@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const sidebarWidth = 260;
 
@@ -27,6 +28,7 @@ const sideMenuGroups = [
 
 const MainPage = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState("Overview");
 
@@ -226,7 +228,7 @@ const MainPage = () => {
                 size="small"
                 color="error"
                 onClick={() => {
-                  localStorage.removeItem("token");
+                  logout();
                   navigate("/login", { replace: true });
                 }}
               >
