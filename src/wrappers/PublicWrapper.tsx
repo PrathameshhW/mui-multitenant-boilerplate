@@ -1,9 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const PublicWrapper = () => {
-  const token = localStorage.getItem("token");
+  const { isAuthenticated } = useAuth();
 
-  if (token) {
+  if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 

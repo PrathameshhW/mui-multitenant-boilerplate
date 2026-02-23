@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import type { LoginLayoutProps } from "../../../pages/login/types/login.dto";
 
 const LoginLayout: React.FC<LoginLayoutProps> = (props) => {
-  const { form, handleLoginSubmit } = props;
+  const { form, handleLoginSubmit, isSubmitting } = props;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -30,8 +30,13 @@ const LoginLayout: React.FC<LoginLayoutProps> = (props) => {
               />
             </FormItem>
 
-            <Button type="submit" variant="contained" fullWidth>
-              Login
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              loading={isSubmitting}
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
             </Button>
           </div>
         </AppForm>
