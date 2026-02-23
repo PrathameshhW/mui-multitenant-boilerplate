@@ -5,7 +5,7 @@ import { LoginLayout } from "../../clients";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "./types/login.dto";
 import { loginUser } from "./login.api";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks";
 
 const LoginPage = () => {
   const form = useForm({
