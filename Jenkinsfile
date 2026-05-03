@@ -1,9 +1,13 @@
 def siteIdVarFor(String client) {
   return "NETLIFY_SITE_ID_${client.toUpperCase().replaceAll(/[^A-Z0-9]+/, '_')}"
 }
-
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'node:20'
+      args '-u root'
+    }
+  }
 
   options {
     timestamps()
