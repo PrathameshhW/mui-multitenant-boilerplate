@@ -91,6 +91,7 @@ Client selection is resolved at compile time in `vite.config.ts` via one alias:
 - `@client` -> `src/clients/<selected>`
 
 Examples:
+
 - `@client/theme/AppTheme`
 - `@client/login/LoginLayout`
 - `@client/pages/Dashboard`
@@ -121,3 +122,68 @@ This is intentional to prevent accidental fallback bundles with wrong branding.
 - `npm run lint`
 - `npm run client1`
 - `npm run client1:build`
+
+## Jenkins Deployment
+
+A sample [Jenkinsfile](/Users/prathameshjadhav/Documents/Projects/Personal/mui-setup/Jenkinsfile) is included for automatic multi-tenant builds and Netlify deployments.
+
+### What it does
+
+- Installs dependencies with `npm ci`
+- Discovers all tenant folders inside `src/clients`
+- Runs all tenant builds in parallel
+- Archives `dist/<client>` artifacts in Jenkins
+- Deploys each built tenant to its matching Netlify site
+
+### No Manual Client Selection
+
+The pipeline does not ask you to choose `default` or `client1`.
+
+It automatically detects:
+
+- `src/clients/default`
+- `src/clients/client1`
+
+If you add another folder like `src/clients/client2`, Jenkins will pick it up automatically on the next run.
+
+### Jenkins Parameters
+
+- `SKIP_DEPLOY`: set to `true` if you only want to build all tenants without deploying
+
+### Required Jenkins Credentials And Env Vars
+
+1. Add a Jenkins secret text credential with id `netlify-auth-token`.
+2. Add tenant-specific environment variables in the Jenkins job or globally:
+   - `NETLIFY_SITE_ID_DEFAULT=<site-id-for-default>`
+   - `NETLIFY_SITE_ID_CLIENT1=<site-id-for-client1>`
+
+For any new tenant, follow the same pattern:
+
+- `NETLIFY_SITE_ID_<CLIENT_NAME_IN_UPPERCASE>=<site-id>`
+
+Example:
+
+- `src/clients/client-two` -> `NETLIFY_SITE_ID_CLIENT_TWO`
+
+### Expected Jenkins Agent Setup
+
+- Node.js + npm
+- Internet access to install npm packages and deploy to Netlify
+
+### Cloudflare Note
+
+This pipeline deploys the static frontend to Netlify.
+
+Cloudflare should stay in front as your DNS/proxy layer by pointing each tenant domain to the correct Netlify site. Jenkins does not need to deploy separately to Cloudflare unless you also want it to manage DNS through the Cloudflare API.
+
+### Auto Build Trigger
+
+Opening Jenkins at `http://localhost:8080` does not start a build by itself.
+
+If you want automatic builds, configure one of these in Jenkins:
+
+1. Git webhook trigger on every push
+2. Poll SCM on a schedule
+3. Manual `Build Now` / `Build with Parameters`
+
+Webhook trigger is the recommended option.
