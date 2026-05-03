@@ -18,10 +18,6 @@ pipeline {
     )
   }
 
-  environment {
-    NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token')
-  }
-
   stages {
     stage('Checkout') {
       steps {
@@ -89,6 +85,11 @@ pipeline {
       when {
         expression { !params.SKIP_DEPLOY }
       }
+
+      environment {
+        NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token')
+      }
+
       steps {
         script {
           def clients = env.CLIENTS.split(',') as List<String>
@@ -123,7 +124,13 @@ pipeline {
 
   post {
     always {
-      cleanWs()
+      script {
+        try {
+          cleanWs()
+        } catch (err) {
+          echo "Workspace cleanup skipped: ${err}"
+        }
+      }
     }
   }
 }
